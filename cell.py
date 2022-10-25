@@ -36,13 +36,24 @@ class Cell:
 
     def l_click(self, event):
         if not self.is_open and not self.is_flag and not self.is_mine:
-            self.is_open = True
-            self.cell_object.configure(
+            if self.mine_count > 0:
+                self.is_open = True
+                self.cell_object.configure(
+                        bg="gray",
+                        text=self.mine_count,
+                        fg="black"
+                    )
+            else:
+                self.is_open = True
+                self.cell_object.configure(
                     bg="gray",
                     text=self.mine_count,
                     fg="black"
                 )
+                Cell.auto_open(self)
+
         elif self.is_mine and not self.is_flag:
+            self.is_open = True
             self.cell_object.configure(
                 bg="black",
                 text="Ø",
@@ -52,26 +63,62 @@ class Cell:
         print(repr(self))
 
     def r_click(self, event):
-        if not self.is_open and not self.is_flag:
-            self.is_flag = True
-            self.cell_object.configure(
-                bg="gray",
-                text="F",
-                fg="red"
-            )
+        if not self.is_open:
+            if not self.is_flag :
+                self.is_flag = True
+                self.cell_object.configure(
+                    bg="gray",
+                    text="F",
+                    fg="red"
+                )
+            else:
+                self.is_flag = False
+                self.cell_object.configure(
+                    bg="gray",
+                    text="",
+                    fg="white"
+                )
         else:
-            self.is_flag = False
-            self.cell_object.configure(
-                bg="gray",
-                text="",
-                fg="white"
-            )
+            return
 
         print(repr(self))
+
+    def auto_open(self):
+        cells_to_check = []
+        cells_to_check.append(self)
+
+        surroundings_cells = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, +1], [1, -1], [1, 0], [1, 1]]
+
+        def walk_around(cells):
+            for i in cells:
+                x = i.x
+                y = i.y
+                cells_to_check.pop(0)
+                for n in range(8):
+                    for cell in Cell.all:
+                        if cell.x == x + surroundings_cells[n][0] and cell.y == y + surroundings_cells[n][1] and not cell.is_open:
+                            print(cell)
+                            cell.is_open = True
+                            cell.cell_object.configure(
+                                bg="gray",
+                                text=cell.mine_count,
+                                fg="black"
+                            )
+                            if cell.mine_count == 0:
+                                cells_to_check.append(cell)
+                                #print(cells_to_check)
+
+            if len(cells_to_check) > 0:
+                walk_around(cells_to_check)
+            else:
+                return
+
+        walk_around(cells_to_check)
 
     @staticmethod
     def show_all_minecount():
         for cell in Cell.all:
+            cell.is_open = True
             if cell.is_mine:
                 cell.cell_object.configure(
                     bg="black",
@@ -95,26 +142,21 @@ class Cell:
     @staticmethod
     def calculate_minecount():
         for cell in Cell.all:
-            x = cell.x
-            y = cell.y
+            if cell.is_mine:
+                pass
+            else:
+                x = cell.x
+                y = cell.y
+                Cell.surroundings_mines = 0
 
-            print(str(x) + ", " + str(y), end=" : ")
+                print(str(x) + ", " + str(y), end=" : ")
 
-            Cell.surroundings_mines = 0
+                surroundings_cells = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
+                for n in range(8):
+                    Cell.cell_from_axis(x + surroundings_cells[n][0], y + surroundings_cells[n][1])
 
-            Cell.cell_from_axis(x - 1, y - 1)
-            Cell.cell_from_axis(x - 1, y)
-            Cell.cell_from_axis(x - 1, y + 1)
-
-            Cell.cell_from_axis(x, y - 1)
-            Cell.cell_from_axis(x, y + 1)
-
-            Cell.cell_from_axis(x + 1, y - 1)
-            Cell.cell_from_axis(x + 1, y)
-            Cell.cell_from_axis(x + 1, y + 1)
-
-            cell.mine_count = Cell.surroundings_mines
-            print(Cell.surroundings_mines)
+                cell.mine_count = Cell.surroundings_mines
+                print(Cell.surroundings_mines)
 
     @staticmethod
     def randomize():
@@ -124,3 +166,12 @@ class Cell:
 
     def __repr__(self):
         return f"Cell({self.x}, {self.y}, {self.is_open}, {self.is_flag}, {self.is_mine}, {self.mine_count})"
+
+'''print(cells_to_check)
+        if len(cells_to_check) > 0:
+            for cell in cells_to_check:
+                x = cell.x
+                y = cell.y
+                open_surrounding_cells(x, y)
+        else:
+            return'''

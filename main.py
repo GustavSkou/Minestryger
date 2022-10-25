@@ -25,7 +25,7 @@ for x in range(10):
     for y in range(10):
         c = Cell(x=x, y=y, is_flag=False, is_mine=False, is_open=False, mine_count=0)
         c.create_cell(
-            frame_pos = lower_frame,
+            frame_pos=lower_frame,
             txt=""
         )
         c.cell_object.grid(
