@@ -23,7 +23,7 @@ lower_frame.place(x=0, y=s.root_height/10)
 
 for x in range(10):
     for y in range(10):
-        c = Cell(x=x, y=y, is_flag=False, is_mine=False, is_open=False, mine_count=0)
+        c = Cell(x=x, y=y, is_flag=False, is_mark=False, is_mine=False, is_open=False, mine_count=0)
         c.create_cell(
             frame_pos=lower_frame,
             txt=""
@@ -32,8 +32,6 @@ for x in range(10):
             column=x, row=y,
         )
 
-Cell.randomize()
-Cell.calculate_minecount()
-#Cell.show_all_minecount()
+
 
 root.mainloop()

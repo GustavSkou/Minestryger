@@ -4,4 +4,4 @@ root_witdh = 350
 
 geo = str(root_witdh) + "x" + str(root_height)
 
-total_mines = 10
+total_mines = 20
