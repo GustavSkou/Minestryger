@@ -1,6 +1,5 @@
-
-root_height = 500
-root_witdh = 350
+root_height = 302
+root_witdh = 240
 
 geo = str(root_witdh) + "x" + str(root_height)
 

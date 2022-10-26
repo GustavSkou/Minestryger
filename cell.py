@@ -61,11 +61,10 @@ class Cell:
             elif self.is_mine and not self.is_flag:
                 self.is_open = True
                 self.cell_object.configure(
-                    bg="black",
+                    bg="red",
                     text="Ø",
-                    fg="white"
+                    fg="black"
                 )
-
                 Cell.lost()
 
             print(repr(self))
@@ -105,22 +104,27 @@ class Cell:
             for cell in Cell.all:
                 cell.is_mine = False
             Cell.randomize()
-            print("first mine")
-
         Cell.calculate_minecount()
 
-        self.is_open = True
-        self.cell_object.configure(
-            bg="gray",
-            text=self.mine_count,
-            fg="black"
-        )
+        if self.mine_count > 0:
+            self.is_open = True
+            self.cell_object.configure(
+                bg="gray",
+                text=self.mine_count,
+                fg="black"
+            )
+        else:
+            self.is_open = True
+            self.cell_object.configure(
+                bg="gray",
+                text=self.mine_count,
+                fg="black"
+            )
+            Cell.auto_open(self)
 
     @staticmethod
     def lost():
-        for cell in Cell.all:
-            cell.cell_object.bind("<Button-1>")
-            cell.cell_object.bind("<Button-3>")
+        Cell.show_all_minecount()
 
     def auto_open(self):
         cells_to_check = []
@@ -132,7 +136,7 @@ class Cell:
             for i in cells:
                 x = i.x
                 y = i.y
-                cells_to_check.pop(0)
+                cells_to_check.pop(cells_to_check.index(i))
                 for n in range(8):
                     for cell in Cell.all:
                         if cell.x == x + surroundings_cells[n][0] and cell.y == y + surroundings_cells[n][1] and not cell.is_open:
@@ -144,6 +148,7 @@ class Cell:
                             )
                             if cell.mine_count == 0:
                                 cells_to_check.append(cell)
+                                print(cells_to_check)
 
             if len(cells_to_check) > 0:
                 walk_around(cells_to_check)
@@ -153,21 +158,37 @@ class Cell:
         walk_around(cells_to_check)
 
     @staticmethod
+    def clear_board():
+        for cell in Cell.all:
+            cell.is_open = False
+            cell.is_mine = False
+            cell.is_flag = False
+            cell.is_mark = False
+            cell.cell_object.configure(
+                bg="gray",
+                text="",
+                fg="black"
+            )
+
+    @staticmethod
     def show_all_minecount():
         for cell in Cell.all:
-            cell.is_open = True
-            if cell.is_mine:
-                cell.cell_object.configure(
-                    bg="black",
-                    text="Ø",
-                    fg="white"
-                )
+            if cell.is_open:
+                pass
             else:
-                cell.cell_object.configure(
-                    bg="gray",
-                    text=cell.mine_count,
-                    fg="black"
-                )
+                cell.is_open = True
+                if cell.is_mine:
+                    cell.cell_object.configure(
+                        bg="black",
+                        text="Ø",
+                        fg="white"
+                    )
+                else:
+                    cell.cell_object.configure(
+                        bg="gray",
+                        text=cell.mine_count,
+                        fg="black"
+                    )
 
     @staticmethod
     def cell_from_axis(x, y):
