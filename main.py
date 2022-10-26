@@ -5,6 +5,8 @@ from restart import Restart
 
 root = tk.Tk()
 root.geometry(s.geo)
+root.resizable(False, False)
+root.title("MineStryger")
 
 upper_frame = tk.Frame(
     height=s.root_height/7,
@@ -38,7 +40,7 @@ r.create_restart_button(
     frame_pos=upper_frame
 )
 r.restart_object.place(
-    x=s.root_witdh/2, y=(s.root_height/7)/2, anchor= "center"
+    x=s.root_witdh/2, y=(s.root_height/7)/2, anchor="center"
 )
 
 root.mainloop()

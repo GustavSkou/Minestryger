@@ -26,7 +26,7 @@ class Cell:
         cell = Button(
             frame_pos,
             text=txt,
-            bg="gray",
+            bg="#979897",
             height=1,
             width=2
 
@@ -43,28 +43,13 @@ class Cell:
         else:
             if not self.is_open and not self.is_flag and not self.is_mine:
                 if self.mine_count > 0:
-                    self.is_open = True
-                    self.cell_object.configure(
-                            bg="gray",
-                            text=self.mine_count,
-                            fg="black"
-                        )
+                    Cell.open_cell(self)
                 else:
-                    self.is_open = True
-                    self.cell_object.configure(
-                        bg="gray",
-                        text=self.mine_count,
-                        fg="black"
-                    )
+                    Cell.open_empty(self)
                     Cell.auto_open(self)
 
             elif self.is_mine and not self.is_flag:
-                self.is_open = True
-                self.cell_object.configure(
-                    bg="red",
-                    text="Ø",
-                    fg="black"
-                )
+                Cell.open_mine(self)
                 Cell.lost()
 
             print(repr(self))
@@ -72,27 +57,11 @@ class Cell:
     def r_click(self, event):
         if not self.is_open:
             if not self.is_flag and not self.is_mark:
-                self.is_flag = True
-                self.cell_object.configure(
-                    bg="gray",
-                    text="F",
-                    fg="red"
-                )
+                Cell.open_r(self, "F")
             elif self.is_flag:
-                self.is_flag = False
-                self.is_mark = True
-                self.cell_object.configure(
-                    bg="gray",
-                    text="?",
-                    fg="white"
-                )
+                Cell.open_r(self, "?")
             else:
-                self.is_mark = False
-                self.cell_object.configure(
-                    bg="gray",
-                    text="",
-                    fg="white"
-                )
+                Cell.open_r(self, "")
         else:
             return
 
@@ -107,20 +76,58 @@ class Cell:
         Cell.calculate_minecount()
 
         if self.mine_count > 0:
-            self.is_open = True
-            self.cell_object.configure(
-                bg="gray",
-                text=self.mine_count,
-                fg="black"
+            Cell.open_cell(self)
+        else:
+            Cell.open_empty(self)
+            Cell.auto_open(self)
+
+    @staticmethod
+    def open_cell(cell):
+        cell.is_open = True
+        cell.cell_object.configure(
+            bg="gray",
+            text=cell.mine_count,
+            fg="black"
+        )
+
+    @staticmethod
+    def open_mine(cell):
+        cell.is_open = True
+        cell.cell_object.configure(
+            bg="red",
+            text="Ø",
+            fg="black"
+        )
+
+    @staticmethod
+    def open_empty(cell):
+        cell.is_open = True
+        cell.cell_object.configure(
+            bg="gray",
+            text="",
+        )
+
+    @staticmethod
+    def open_r(cell, txt):
+        if txt == "F":
+            cell.is_flag = True
+            cell.cell_object.configure(
+                text="F",
+                fg="red"
+            )
+        elif txt == "?":
+            cell.is_flag = False
+            cell.is_mark = True
+            cell.cell_object.configure(
+                text="?",
+                fg="white"
             )
         else:
-            self.is_open = True
-            self.cell_object.configure(
-                bg="gray",
-                text=self.mine_count,
-                fg="black"
+            cell.is_mark = False
+            cell.cell_object.configure(
+                text="",
+                fg="white"
             )
-            Cell.auto_open(self)
 
     @staticmethod
     def lost():
@@ -140,13 +147,20 @@ class Cell:
                 for n in range(8):
                     for cell in Cell.all:
                         if cell.x == x + surroundings_cells[n][0] and cell.y == y + surroundings_cells[n][1] and not cell.is_open:
-                            cell.is_open = True
-                            cell.cell_object.configure(
-                                bg="gray",
-                                text=cell.mine_count,
-                                fg="black"
-                            )
-                            if cell.mine_count == 0:
+                            if cell.mine_count > 0:
+                                cell.is_open = True
+                                cell.cell_object.configure(
+                                    bg="gray",
+                                    text=cell.mine_count,
+                                    fg="black"
+                                )
+                            else:
+                                cell.is_open = True
+                                cell.cell_object.configure(
+                                    bg="gray",
+                                    text="",
+                                    fg="black"
+                                )
                                 cells_to_check.append(cell)
                                 print(cells_to_check)
 
@@ -165,10 +179,11 @@ class Cell:
             cell.is_flag = False
             cell.is_mark = False
             cell.cell_object.configure(
-                bg="gray",
+                bg="#979897",
                 text="",
                 fg="black"
             )
+        Cell.is_first_click = True
 
     @staticmethod
     def show_all_minecount():
@@ -184,11 +199,7 @@ class Cell:
                         fg="white"
                     )
                 else:
-                    cell.cell_object.configure(
-                        bg="gray",
-                        text=cell.mine_count,
-                        fg="black"
-                    )
+                    Cell.open_cell(cell)
 
     @staticmethod
     def cell_from_axis(x, y):

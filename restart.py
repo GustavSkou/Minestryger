@@ -12,12 +12,12 @@ class Restart:
             text="Restart",
 
         )
-        restart.bind("<Button-1>", self.click)
+        restart.bind("<Button-1>", Restart.click)
         self.restart_object = restart
 
-    def click(self, event):
+    @staticmethod
+    def click(event):
         Cell.clear_board()
         Cell.randomize()
         Cell.calculate_minecount()
-        #Cell.show_all_minecount()
-        print("restart")
+        Cell.show_all_minecount()
