@@ -1,6 +1,7 @@
 from tkinter import Button
 import random as r
 import settings as s
+from flag_counter import Counter
 r.seed()
 
 
@@ -50,6 +51,7 @@ class Cell:
 
             elif self.is_mine and not self.is_flag:
                 Cell.open_mine(self)
+                self.cell_object.configure(bg="red")
                 Cell.lost()
 
             print(repr(self))
@@ -58,10 +60,15 @@ class Cell:
         if not self.is_open:
             if not self.is_flag and not self.is_mark:
                 Cell.open_r(self, "F")
+                Counter.plus()
             elif self.is_flag:
+                Counter.minus()
                 Cell.open_r(self, "?")
             else:
                 Cell.open_r(self, "")
+
+            Counter.update_counter()
+
         else:
             return
 
@@ -94,9 +101,9 @@ class Cell:
     def open_mine(cell):
         cell.is_open = True
         cell.cell_object.configure(
-            bg="red",
+            bg="black",
             text="Ø",
-            fg="black"
+            fg="white"
         )
 
     @staticmethod
@@ -191,16 +198,12 @@ class Cell:
             if cell.is_open:
                 pass
             else:
-                cell.is_open = True
                 if cell.is_mine:
-                    cell.cell_object.configure(
-                        bg="black",
-                        text="Ø",
-                        fg="white"
-                    )
-                else:
+                    Cell.open_mine(cell)
+                elif cell.mine_count > 0:
                     Cell.open_cell(cell)
-
+                else:
+                    Cell.open_empty(cell)
     @staticmethod
     def cell_from_axis(x, y):
         for cell in Cell.all:

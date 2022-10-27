@@ -20,4 +20,4 @@ class Restart:
         Cell.clear_board()
         Cell.randomize()
         Cell.calculate_minecount()
-        Cell.show_all_minecount()
+        #Cell.show_all_minecount()
