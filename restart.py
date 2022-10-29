@@ -1,5 +1,6 @@
 from cell import Cell
 from tkinter import Button
+from flag_counter import Counter
 
 
 class Restart:
@@ -17,7 +18,7 @@ class Restart:
 
     @staticmethod
     def click(event):
-        Cell.clear_board()
-        Cell.randomize()
-        Cell.calculate_minecount()
+        Cell.reset()
+        Counter.reset_count()
+        Counter.update_counter()
         #Cell.show_all_minecount()

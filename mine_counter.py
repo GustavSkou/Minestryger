@@ -11,6 +11,7 @@ class MineCounter:
         counter = Label(
             frame_pos,
             text=str(self.count) + str(self.count10) + str(self.count100),
-            font = ('Arial 11')
+            font=('Arial 11'),
+            fg="red"
         )
         self.counter_object = counter

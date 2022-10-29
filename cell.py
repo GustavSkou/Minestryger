@@ -77,8 +77,8 @@ class Cell:
     def first_click(self):
         Cell.randomize()
         while self.is_mine:
-            for cell in Cell.all:
-                cell.is_mine = False
+            print("buh")
+            Cell.clear_board()
             Cell.randomize()
         Cell.calculate_minecount()
 
@@ -87,6 +87,8 @@ class Cell:
         else:
             Cell.open_empty(self)
             Cell.auto_open(self)
+
+
 
     @staticmethod
     def open_cell(cell):
@@ -180,6 +182,19 @@ class Cell:
 
     @staticmethod
     def clear_board():
+        for cell in Cell.all:
+            cell.is_open = False
+            cell.is_mine = False
+            cell.is_flag = False
+            cell.is_mark = False
+            cell.cell_object.configure(
+                bg="#979897",
+                text="",
+                fg="black"
+            )
+
+    @staticmethod
+    def reset():
         for cell in Cell.all:
             cell.is_open = False
             cell.is_mine = False

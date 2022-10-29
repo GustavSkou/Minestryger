@@ -16,7 +16,8 @@ class Counter:
         counter = Label(
             frame_pos,
             text=str(self.count100) + str(self.count10) + str(self.count),
-            font=('Arial 11')
+            font=('Arial 11'),
+            fg="red"
         )
 
         self.counter_object = counter
@@ -50,10 +51,19 @@ class Counter:
                 if counter.count10 == 10:
                     counter.count10 = 0
                     counter.count100 += 1
+
+    @staticmethod
+    def reset_count():
+        for counter in Counter.all:
+            counter.count = 0
+            counter.count10 = 0
+            counter.count100 = 0
+
     @staticmethod
     def update_counter():
         for counter in Counter.all:
             counter.counter_object.configure(
                 text=str(counter.count100) + str(counter.count10) + str(counter.count),
-                font=('Arial 11')
+                font=('Arial 11'),
+                fg="red"
             )
